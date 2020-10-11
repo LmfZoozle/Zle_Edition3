@@ -1,0 +1,4 @@
+ZleLang Edition2 : Byte Code Reference 
+
+00000000 push rax
+00000001 add 
