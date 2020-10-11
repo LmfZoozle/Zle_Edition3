@@ -10,6 +10,7 @@ const string path = "bytecode.txt";
 
 //バイトコードから検索するのと
 //ニーモニックから検索するのと
+//全部晒すのと
 
 class showall_exception:public std::exception{
     public:
