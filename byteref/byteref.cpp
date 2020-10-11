@@ -61,15 +61,15 @@ int main(int argc,char** argv)
                 cout<<"Argument is too small."<<endl;
 
             }
-            cout << "Number -> bytecode" << endl;
+        //    cout << "Number -> bytecode" << endl;
         }
         catch (showall_exception){
             cout<<"Show all bytecode and mnemonics"<<endl;
         }
         catch (std::invalid_argument)
         {
-            cout << "Exception" << endl;
-            cout << "String -> mnemonic" << endl;
+//            cout << "Exception" << endl;
+  //          cout << "String -> mnemonic" << endl;
         }
     }
 
