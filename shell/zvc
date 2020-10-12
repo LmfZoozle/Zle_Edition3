@@ -1,0 +1,8 @@
+#!/bin/sh
+cd ~/Code/Zle/Edition3/compiler
+cargo run>../test/test.bc ../test/test.zle
+#cd ../test
+#cc -o run_exe asm.s 
+#chmod +x run_exe
+#./run_exe
+#echo $?
