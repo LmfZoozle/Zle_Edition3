@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <vector>
+#include "func.h"
 
 using namespace std;
 
@@ -29,14 +30,14 @@ int main(int argc,char** argv)
         cout << "Cannot find \"bytecode.txt\"" << endl;
         cout << "Aborting to due previous problem..." << endl;
     }
-    vector<string> line;
+    vector<string> lines;
     while (!catalog.eof())
     {
         string tmp;
         getline(catalog, tmp);
-        line.emplace_back(tmp);
+        lines.emplace_back(tmp);
         tmp.clear();
-        cout << line.back() << endl;
+        cout << lines.back() << endl;
     }
 
     while (1)
@@ -65,7 +66,7 @@ int main(int argc,char** argv)
         //    cout << "Number -> bytecode" << endl;
         }
         catch (showall_exception){
-            cout<<"Show all bytecode and mnemonics"<<endl;
+            showall_code(lines);
         }
         catch (std::invalid_argument)
         {
