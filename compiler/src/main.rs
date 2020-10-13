@@ -16,10 +16,13 @@ fn main() {
         exit(1);
     }
     println!("This is from zle compiler");
-    let name=&option[0];
+    let  name=&option[1];
     let code=if let Ok(a)=std::fs::read_to_string(name){
         a
     }else{
+        eprintln!("No such a file.");
         exit(2);
     };
+    eprintln!("This is nightly build.");
+    
 }
