@@ -31,13 +31,19 @@ int main(int argc,char** argv)
         cout << "Aborting to due previous problem..." << endl;
     }
     vector<string> lines;
+
+    //ここはいらない行を捨ててるだけ
+    string tmpa;
+    getline(catalog,tmpa);
+    getline(catalog,tmpa);
+
     while (!catalog.eof())
     {
         string tmp;
         getline(catalog, tmp);
         lines.emplace_back(tmp);
-        tmp.clear();
-        cout << lines.back() << endl;
+        //tmp.clear();
+        //cout << lines.back() << endl;
     }
 
     while (1)
@@ -45,11 +51,10 @@ int main(int argc,char** argv)
         string input;
         bool is_num=true;
         cout << "Enter the bytecode or mnemonic." << endl;
-        cout<<"Also you can see the all of them by \"showall\" "<<endl;
+        cout<<"Also you can see all of them by \"showall\" "<<endl;
         getline(cin, input);
 
-        cout << endl
-             << input << endl;
+        //cout << endl<< input << endl;
         try
         {
             if (input=="showall"){
@@ -70,8 +75,6 @@ int main(int argc,char** argv)
         }
         catch (std::invalid_argument)
         {
-//            cout << "Exception" << endl;
-  //          cout << "String -> mnemonic" << endl;
         }
     }
 

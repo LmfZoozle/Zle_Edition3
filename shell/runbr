@@ -1,0 +1,4 @@
+#!/bin/sh
+cd ~/Code/Zle/Edition3/byteref
+g++ -o byteref byteref.cpp
+./byteref

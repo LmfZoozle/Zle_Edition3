@@ -3,7 +3,7 @@
 
 using namespace std;
 void showall_code(vector<string>& code){
-    cout<<"show all bytecodes and mnemonics"<<endl<<endl;
+    cout<<endl<<"show all bytecodes and mnemonics"<<endl;
     for(auto &run:code){
         cout<<run<<endl;
     }
