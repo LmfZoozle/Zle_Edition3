@@ -24,5 +24,6 @@ fn main() {
         exit(2);
     };
     eprintln!("This is nightly build.");
+    let token=lexer::read_into_token(code);
     
 }
