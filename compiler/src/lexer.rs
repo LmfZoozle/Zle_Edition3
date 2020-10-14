@@ -13,6 +13,9 @@ pub fn read_into_token(input:String)->Vec<Token>{
     let mut result=Vec::new();
     for run in input.split_whitespace(){
         if let Ok(n)=run.parse::<i32>(){
+            if IS_DEBUG{
+                eprintln!("Num: {}",n);
+            }
             result.push(Token::NUM(n));
         }else{
             match run {
