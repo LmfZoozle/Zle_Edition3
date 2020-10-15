@@ -1,9 +1,10 @@
 mod lexer;
 mod parser;
+mod generator;
 
-use std::env::args;
+//use std::env::args;
 use std::process::exit;
-use std::fs;
+//use std::fs;
 
 const PATH: &str = "~/Code/Zle/Edition3/test";
 const IS_DEBUG:bool=true;
@@ -25,5 +26,5 @@ fn main() {
     };
     eprintln!("This is nightly build.");
     let token=lexer::read_into_token(code);
-    
+    let priority=parser::token_into_priorty(token);
 }
