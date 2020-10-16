@@ -27,14 +27,7 @@ fn main() {
     eprintln!("This is nightly build.");
     let token=lexer::read_into_token(code);
     let priority=parser::token_into_priorty(token);
-    let a=vec!(4,4,0,2,0,6,5,0,1);
-    for run in a.split(|x|*x==0){
-        eprintln!("{:?}だ",run);
-    }
-    let a=vec!(22,4,22,4,4,4,4,33,4,8,88);
-    eprintln!("こっから");
-    for run in a.split(|x|*x==4){
-        eprintln!("{:?}だ",run);
-    }
-    
+    let mut changed=parser::change_prival(priority);
+    let resolved=parser::sort_changed(&mut changed);    
+    parser::debug::show_resolved(&resolved);
 }
