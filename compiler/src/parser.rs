@@ -15,6 +15,7 @@ pub fn token_into_tree(tokens:Vec<lexer::Token>){
 //とりあえずLevNのenumでやる
 //->u32でやるよりenumのが整理しやすいかと思ったけど、()とかで優先度が変わるなら
 //enumじゃ厳しいかな
+#[derive(PartialEq)]
 pub enum Priority{
     Lev0,
     Lev1,
@@ -72,4 +73,69 @@ pub fn token_into_priorty(tokens:Vec<lexer::Token>)->Vec<PriorityVal>{
     }
 
     result
+}
+
+
+pub fn format_prival(mut from: Vec<PriorityVal>) -> Vec<PriorityVal> {
+    // 5 + 8 * 4 - 7
+    let mut result = Vec::new();
+    let mut count = 0;
+    while count < from.len() {
+        if *from[count].get_level() == Priority::Lev2 {
+            if count != 0 {
+                from[count - 1].set_level(Priority::Lev2);
+            }
+            if count > 1 {
+                from[count - 2].set_level(Priority::Lev2);
+            }
+            if count != from.len() - 1 {
+                from[count + 1].set_level(Priority::Lev2);
+            }
+        }
+        count += 1;
+    }
+
+    result
+}
+
+fn howlong_lev2(target: &Vec<PriorityVal>, idx: usize) -> usize {
+    let mut count = idx;
+    let mut result = 0;
+    while count < target.len() {
+        if *target[count].get_level() != Priority::Lev2 {
+            return result;
+        }
+        result += 1
+    }
+    return result;
+}
+
+pub fn resolve_prival(mut from: Vec<PriorityVal>) -> Vec<PriorityVal> {
+    let a = from.split(|x| *x.get_level() != Priority::Lev2);
+    
+    from
+    
+    //let mut result=Vec::new();
+    /*let mut count=from.len()-1;
+    loop {
+        match from[count].get_level() {
+            parser::Priority::Lev2=>{
+                let len=howlong_lev2(&from, count);
+                from.split
+            }
+            _=>{
+                //do nothing
+                // if let ?
+            }
+        }
+
+
+
+        if count==0{
+            break;
+        }
+        count-=1;
+    }
+    result
+    */
 }
