@@ -26,8 +26,5 @@ fn main() {
     };
     eprintln!("This is nightly build.");
     let token=lexer::read_into_token(code);
-    let priority=parser::token_into_priorty(token);
-    let mut changed=parser::change_prival(priority);
-    let resolved=parser::sort_changed(&mut changed);    
-    parser::debug::show_resolved(&resolved);
+    let a=token.iter();
 }
