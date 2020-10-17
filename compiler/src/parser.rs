@@ -139,7 +139,7 @@ pub fn change_prival(mut from: Vec<PriorityVal>) -> Vec<PriorityVal> {
     return result;
 }*/
 
-pub fn sort_changed(mut from: &mut Vec<PriorityVal>) ->Vec<&PriorityVal>{ 
+pub fn sort_changed(from: &mut Vec<PriorityVal>) ->Vec<&PriorityVal>{ 
     //let a = from.split(|x| *x.get_level() != Priority::Lev2);
     let mut lv2:Vec<&PriorityVal> = from.iter()
     .filter(|x| *x.get_level() == Priority::Lev2).collect();
