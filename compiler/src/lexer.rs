@@ -1,10 +1,15 @@
 use super::*;
 
-pub enum Token{
+#[derive(Clone,Copy)]
+pub enum Operator{
     ADD,
     SUB,
     MUL,
     DIV,
+}
+#[derive(Clone,Copy)]
+pub enum Token{
+    OPE(Operator),    
     NUM(i32),
 }
 
@@ -19,10 +24,10 @@ pub fn read_into_token(input:String)->Vec<Token>{
             result.push(Token::NUM(n));
         }else{
             match run {
-                "+"=>result.push(Token::ADD),
-                "-"=>result.push(Token::SUB),
-                "*"=>result.push(Token::MUL),
-                "/"=>result.push(Token::DIV),
+                "+"=>result.push(Token::OPE(Operator::ADD)),
+                "-"=>result.push(Token::OPE(Operator::SUB)),
+                "*"=>result.push(Token::OPE(Operator::MUL)),
+                "/"=>result.push(Token::OPE(Operator::DIV)),
                 _=>{
                     eprintln!("Unknown Token: {}",run);
                     exit(5);

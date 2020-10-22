@@ -16,7 +16,7 @@ fn main() {
         eprintln!("lack");
         exit(1);
     }
-    println!("This is from zle compiler");
+    //println!("This is from zle compiler");
     let  name=&option[1];
     let code=if let Ok(a)=std::fs::read_to_string(name){
         a
@@ -26,6 +26,6 @@ fn main() {
     };
     eprintln!("This is nightly build.");
     let token=lexer::read_into_token(code);
-    let priority=parser::token_into_priorty(token);
+ 
     
 }

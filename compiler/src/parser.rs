@@ -1,101 +1,43 @@
 use super::lexer::*;
 use super::*;
 
-#[derive(PartialEq, Clone, Copy, Debug)]
-pub enum Priority {
-    Lev0,
-    Lev1,
-    Lev2,
+
+pub enum Node {
+    Num(lexer::Token),
+    Ope(OpeAndNode),
 }
 
-impl Priority{
-    pub fn priority_into_num(&self)->i32{
-        match self{
-            Lev0=>return 0,
-            Lev1=>1,
-            Lev2=>2,
-        }
-    }
-}
-
-pub struct PriorityVal {
-    level: Priority,
+struct OpeAndNode{
     what: lexer::Token,
-}
-
-impl PriorityVal {
-
-    pub fn new(lev: Priority, val: lexer::Token) -> Self {
-        PriorityVal {
-            level: lev,
-            what: val,
-        }
-    }
-
-    pub fn set_level(&mut self, lev: Priority) {
-        self.level = lev;
-    }
-
-    pub fn get_level(&self) -> &Priority {
-        &self.level
-    }
-    pub fn set_what(&mut self, wh: lexer::Token) {
-        self.what = wh;
-    }
-    pub fn get_what(&self) -> &lexer::Token {
-        &self.what
-    }
-}
-
-/*pub fn prival_into_sorted() -> Vec<lexer::Token> {
-    let sorted = Vec::new();
-    sorted
-}*/
-
-pub fn token_into_priorty(tokens: Vec<lexer::Token>) -> Vec<PriorityVal> {
-    let mut result = Vec::new();
-    for run in tokens {
-        match run {
-            Token::NUM(n) => result.push(PriorityVal::new(Priority::Lev0, lexer::Token::NUM(n))),
-            Token::ADD => result.push(PriorityVal::new(Priority::Lev1, lexer::Token::ADD)),
-            Token::SUB => result.push(PriorityVal::new(Priority::Lev1, lexer::Token::SUB)),
-            Token::MUL => {
-                result.push(PriorityVal::new(Priority::Lev2, lexer::Token::MUL));
-            }
-            Token::DIV => {
-                result.push(PriorityVal::new(Priority::Lev2, lexer::Token::DIV));
-            }
-        }
-    }
-
-    result
-}
-
-pub struct Node {
     left: Box<Node>,
     right: Box<Node>,
-    operator: lexer::Token,
-}
-pub enum Tree {
-    Num(i32),
-    Ope(Box<Node>),
-    EOF,
 }
 
 impl Node {
-    pub fn token_into_tree(top: &mut Box<Node>, tokens: &mut std::slice::Iter<Token>) -> Tree {
-        match tokens.next() {
-            None => Tree::EOF,
-            Some(what) => {
-                //match what{
-
-                //}
-                Tree::EOF
-            }
-            _ => Tree::EOF,
+    fn _new(wh:lexer::Token, lf:Box<Node>,rt:Box<Node>)->Self{
+        Node{
+            what:wh,
+            left:lf,
+            right:rt,
         }
     }
+    fn new_node(wh:lexer::Token, lf:Box<Node>,rt:Box<Node>)->Box<Node>{
+        Box::new(Node::_new(wh, lf, rt))
+    }
 }
+
+
+pub fn token_into_tree(token:Box<Node>) -> Box<Node> {
+    let mut result=Box::new(x);
+
+}
+
+
+
+
+
+
+
 
 pub mod debug {
     fn declare_debug(name: &str) {

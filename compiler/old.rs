@@ -1,18 +1,5 @@
 use super::lexer::*;
 use super::*;
-/*pub enum Tree{
-}
-
-pub fn token_into_tree(tokens:Vec<lexer::Token>){
-
-}
-*/
-
-//木構造は前失敗したので
-//優先度をつけた配列で挑んで見る
-//とりあえずLevNのenumでやる
-//->u32でやるよりenumのが整理しやすいかと思ったけど、()とかで優先度が変わるなら
-//enumじゃ厳しいかな
 
 pub mod debug{
     fn declare_debug(name:&str){
