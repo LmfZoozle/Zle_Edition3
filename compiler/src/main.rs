@@ -26,5 +26,6 @@ fn main() {
     };
     eprintln!("This is nightly build.");
     let token=lexer::read_into_token(code);
-    let a=token.iter();
+    let priority=parser::token_into_priorty(token);
+    
 }

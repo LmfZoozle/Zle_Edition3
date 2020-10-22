@@ -8,12 +8,23 @@ pub enum Priority {
     Lev2,
 }
 
+impl Priority{
+    pub fn priority_into_num(&self)->i32{
+        match self{
+            Lev0=>return 0,
+            Lev1=>1,
+            Lev2=>2,
+        }
+    }
+}
+
 pub struct PriorityVal {
     level: Priority,
     what: lexer::Token,
 }
 
 impl PriorityVal {
+
     pub fn new(lev: Priority, val: lexer::Token) -> Self {
         PriorityVal {
             level: lev,
