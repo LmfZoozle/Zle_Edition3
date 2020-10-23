@@ -1,0 +1,9 @@
+#!/bin/sh
+cd ~/Code/Zle/Edition3/compiler
+cargo run>../test/test.s ../test/test.zle
+cd ../test
+cc -o run_this test.s
+chmod +x run_this
+./run_this
+#echo "結果: "
+echo $?

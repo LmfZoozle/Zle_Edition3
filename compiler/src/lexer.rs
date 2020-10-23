@@ -1,13 +1,13 @@
 use super::*;
 
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq)]
 pub enum Operator{
     ADD,
     SUB,
     MUL,
     DIV,
 }
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq)]
 pub enum Token{
     OPE(Operator),    
     NUM(i32),
@@ -24,7 +24,10 @@ pub fn read_into_token(input:String)->Vec<Token>{
             result.push(Token::NUM(n));
         }else{
             match run {
-                "+"=>result.push(Token::OPE(Operator::ADD)),
+                "+"=>{
+                    eprintln!("あど");
+                    result.push(Token::OPE(Operator::ADD))
+                }
                 "-"=>result.push(Token::OPE(Operator::SUB)),
                 "*"=>result.push(Token::OPE(Operator::MUL)),
                 "/"=>result.push(Token::OPE(Operator::DIV)),

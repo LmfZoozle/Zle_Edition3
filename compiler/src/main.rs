@@ -25,7 +25,14 @@ fn main() {
         exit(2);
     };
     eprintln!("This is nightly build.");
-    let token=lexer::read_into_token(code);
- 
-    
+    let mut token=lexer::read_into_token(code);
+    eprintln!("トークナイズできた");
+    let mut master=parser::new_node_num(1);
+    let a=parser::token_into_tree(&mut master, &mut token.iter());
+    eprintln!("パースできた");
+
+    generator::gen_asm(a);
+    eprintln!("コード生成したよ");
+
+
 }
