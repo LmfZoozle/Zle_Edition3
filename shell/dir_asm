@@ -5,5 +5,5 @@ cd ../test
 cc -o run_this test.s
 chmod +x run_this
 ./run_this
-#echo "結果: "
+#echo "結果: "　<-この一行があると$?が狂う
 echo $?
