@@ -24,6 +24,11 @@ push 7
   sub rax, rdi
 push rax
 push 4
+push 2
+  pop rdi
+  pop rax
+  imul rax, rdi
+push rax
   pop rdi
   pop rax
   sub rax, rdi

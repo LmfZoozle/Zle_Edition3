@@ -2,15 +2,23 @@ use super::*;
 
 #[derive(Clone,Copy,PartialEq)]
 pub enum Operator{
-    ADD,
-    SUB,
-    MUL,
-    DIV,
+    Add,
+    Sub,
+    Mul,
+    Div,
 }
+
+#[derive(Clone,Copy,PartialEq)]
+pub enum Brackets{
+    LeftRound,
+    RightRound,
+}
+
 #[derive(Clone,Copy,PartialEq)]
 pub enum Token{
-    OPE(Operator),    
-    NUM(i32),
+    Ope(Operator),    
+    Num(i32),
+    Braket(Brackets),
 }
 
 
@@ -21,16 +29,16 @@ pub fn read_into_token(input:String)->Vec<Token>{
             if IS_DEBUG{
                 eprintln!("Num: {}",n);
             }
-            result.push(Token::NUM(n));
+            result.push(Token::Num(n));
         }else{
             match run {
                 "+"=>{
                     eprintln!("あど");
-                    result.push(Token::OPE(Operator::ADD))
+                    result.push(Token::Ope(Operator::Add))
                 }
-                "-"=>result.push(Token::OPE(Operator::SUB)),
-                "*"=>result.push(Token::OPE(Operator::MUL)),
-                "/"=>result.push(Token::OPE(Operator::DIV)),
+                "-"=>result.push(Token::Ope(Operator::Sub)),
+                "*"=>result.push(Token::Ope(Operator::Mul)),
+                "/"=>result.push(Token::Ope(Operator::Div)),
                 _=>{
                     eprintln!("Unknown Token: {}",run);
                     exit(5);
