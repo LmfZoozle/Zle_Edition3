@@ -1,7 +1,12 @@
 .intel_syntax noprefix
 .globl main
 main:
+push 0
 push 1
+  pop rdi
+  pop rax
+  sub rax, rdi
+push rax
 push 4
   pop rdi
   pop rax

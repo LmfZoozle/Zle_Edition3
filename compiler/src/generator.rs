@@ -38,16 +38,16 @@ fn _what_gen_asm(token:Box<Node>) {
     if let Node::Ope(a)=*token{
         if let lexer::Token::Ope(op)= a.what{
             match op{
-                lexer::Operator::Add=>{
+                Operators::Add=>{
                     println!("  add rax, rdi");
                 }
-                Operator::Sub=>{
+                Operators::Sub=>{
                     println!("  sub rax, rdi");
                 }
-                Operator::Mul=>{
+                Operators::Mul=>{
                     println!("  imul rax, rdi");
                 }
-                Operator::Div=>{
+                Operators::Div=>{
                     println!("  cqo");
                     println!("  idiv rdi");
                 }

@@ -1,7 +1,7 @@
 use super::*;
 
 #[derive(Clone,Copy,PartialEq)]
-pub enum Operator{
+pub enum Operators{
     Add,
     Sub,
     Mul,
@@ -14,9 +14,10 @@ pub enum Brackets{
     RightRound,
 }
 
+
 #[derive(Clone,Copy,PartialEq)]
 pub enum Token{
-    Ope(Operator),    
+    Ope(Operators),    
     Num(i32),
     Braket(Brackets),
 }
@@ -34,11 +35,11 @@ pub fn read_into_token(input:String)->Vec<Token>{
             match run {
                 "+"=>{
                     eprintln!("あど");
-                    result.push(Token::Ope(Operator::Add))
+                    result.push(Token::Ope(Operators::Add))
                 }
-                "-"=>result.push(Token::Ope(Operator::Sub)),
-                "*"=>result.push(Token::Ope(Operator::Mul)),
-                "/"=>result.push(Token::Ope(Operator::Div)),
+                "-"=>result.push(Token::Ope(Operators::Sub)),
+                "*"=>result.push(Token::Ope(Operators::Mul)),
+                "/"=>result.push(Token::Ope(Operators::Div)),
                 "("=>result.push(Token::Braket(Brackets::LeftRound)),
                 ")"=>result.push(Token::Braket(Brackets::RightRound)),
                 _=>{

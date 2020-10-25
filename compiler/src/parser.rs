@@ -1,6 +1,17 @@
 use super::lexer::*;
 use super::*;
 
+
+fn unary(token: &mut std::slice::Iter<Token>)->Box<Node>{
+    if expect_ope_next(token,lexer::Operators::Add){
+        return unary(token);
+    }
+    if expect_ope_next(token,lexer::Operators::Sub){
+        return new_node_ope(Token::Ope(Operators::Sub), new_node_num(0), unary(token));
+    }
+    return prim(token);
+}
+
 fn expect_bracket(itr:&mut std::slice::Iter<Token>,brack:Brackets)->bool{
     let mut clo = itr.clone();
     if let Some(bb) = clo.next() {
@@ -39,14 +50,14 @@ fn prim(token: &mut std::slice::Iter<Token>) -> Box<Node> {
 }
 
 fn mul(token: &mut std::slice::Iter<Token>) -> Box<Node> {
-    let mut result = prim(token);
+    let mut result = unary(token);
     loop {
-        if expect_ope_next(token,Operator::Mul) {
+        if expect_ope_next(token,Operators::Mul) {
             eprintln!("mul　から　MUL");
-            result = new_node_ope(Token::Ope(Operator::Mul), result, prim(token))
-        } else if expect_ope_next(token,Operator::Div) {
+            result = new_node_ope(Token::Ope(Operators::Mul), result, unary(token))
+        } else if expect_ope_next(token,Operators::Div) {
             eprintln!("mul　から　DIV");
-            result = new_node_ope(Token::Ope(Operator::Div), result, prim(token));
+            result = new_node_ope(Token::Ope(Operators::Div), result, unary(token));
         } else {
             eprintln!("mul　から　break");
             return result;
@@ -57,12 +68,12 @@ fn mul(token: &mut std::slice::Iter<Token>) -> Box<Node> {
 pub fn expr(token: &mut std::slice::Iter<Token>) -> Box<Node> {
     let mut result = mul(token);
     loop {
-        if expect_ope_next(token,Operator::Add) {
+        if expect_ope_next(token,Operators::Add) {
             eprintln!("token　から　ADD");
-            result = new_node_ope(Token::Ope(Operator::Add), result, mul(token))
-        } else if expect_ope_next(token,Operator::Sub) {
+            result = new_node_ope(Token::Ope(Operators::Add), result, mul(token))
+        } else if expect_ope_next(token,Operators::Sub) {
             eprintln!("token　から　SUB");
-            result = new_node_ope(Token::Ope(Operator::Sub), result, mul(token));
+            result = new_node_ope(Token::Ope(Operators::Sub), result, mul(token));
         } else {
             eprintln!("token　から　return");
             return result;
@@ -70,7 +81,7 @@ pub fn expr(token: &mut std::slice::Iter<Token>) -> Box<Node> {
     }
 }
 
-fn expect_ope_next(itr: &mut std::slice::Iter<Token>,ope: lexer::Operator) -> bool {
+fn expect_ope_next(itr: &mut std::slice::Iter<Token>,ope: lexer::Operators) -> bool {
     let mut clo = itr.clone();
     if let Some(bb) = clo.next() {
         if let Token::Ope(a) = *bb {
