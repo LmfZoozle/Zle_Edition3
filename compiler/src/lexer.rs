@@ -52,7 +52,7 @@ fn as_long_as_num(input: &String) -> Option<i32> {
     }
 }
 
-pub fn Ex_read_into_token(input: String) -> Vec<Token> {
+pub fn read_into_token(input: String) -> Vec<Token> {
     let mut result = Vec::new();
     let aa: Vec<char> = input.chars().collect();
     let mut iter = aa.iter();
@@ -137,31 +137,3 @@ pub fn Ex_read_into_token(input: String) -> Vec<Token> {
     result
 }
 
-pub fn read_into_token(input: String) -> Vec<Token> {
-    let mut result = Vec::new();
-    for run in input.split_whitespace() {
-        if let Ok(n) = run.parse::<i32>() {
-            if IS_DEBUG {
-                eprintln!("Num: {}", n);
-            }
-            result.push(Token::Num(n));
-        } else {
-            match run {
-                "+" => {
-                    eprintln!("あど");
-                    result.push(Token::Ope(Operators::Add))
-                }
-                "-" => result.push(Token::Ope(Operators::Sub)),
-                "*" => result.push(Token::Ope(Operators::Mul)),
-                "/" => result.push(Token::Ope(Operators::Div)),
-                "(" => result.push(Token::Braket(Brackets::LeftRound)),
-                ")" => result.push(Token::Braket(Brackets::RightRound)),
-                _ => {
-                    eprintln!("Unknown Token: {}", run);
-                    exit(5);
-                }
-            }
-        }
-    }
-    result
-}

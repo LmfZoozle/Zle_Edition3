@@ -17,5 +17,15 @@ push rax
   pop rax
   sub rax, rdi
 push rax
+push 4
+push 2
+  pop rdi
+  pop rax
+  sub rax, rdi
+push rax
+  pop rdi
+  pop rax
+  sub rax, rdi
+push rax
   pop rax
   ret

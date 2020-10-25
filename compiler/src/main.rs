@@ -24,7 +24,7 @@ fn main() {
         exit(2);
     };
     eprintln!("This is nightly build.");
-    let token=lexer::Ex_read_into_token(code);
+    let token=lexer::read_into_token(code);
     eprintln!("トークナイズできた");
     let a=parser::expr(&mut token.iter());
     eprintln!("パースできた");
