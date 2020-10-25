@@ -6,13 +6,17 @@ use std::collections::VecDeque;
 //pub fn prival_into_bytecode(mut prival: Vec<PriorityVal>) {}
 
 pub fn gen_asm(token:Box<Node>){
-    prelude();
+    prologue();
     _what_gen_asm(token);
+    epilogue();
+}
+
+fn epilogue(){
     println!("  pop rax");
     println!("  ret");
 }
 
-fn prelude() {
+fn prologue() {
     println!(".intel_syntax noprefix");
     println!(".globl main");
     println!("main:");

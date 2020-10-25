@@ -30,7 +30,7 @@ fn mul(master:&mut Box<Node>,token:&mut std::slice::Iter<Token>)->Box<Node>{
     }
 }
 
-pub fn token_into_tree(master:&mut Box<Node>,token:&mut std::slice::Iter<Token>) -> Box<Node> {
+pub fn expr(master:&mut Box<Node>,token:&mut std::slice::Iter<Token>) -> Box<Node> {
     let mut result=mul(master, token);
     let itr=token.next().unwrap();
 

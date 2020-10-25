@@ -39,6 +39,8 @@ pub fn read_into_token(input:String)->Vec<Token>{
                 "-"=>result.push(Token::Ope(Operator::Sub)),
                 "*"=>result.push(Token::Ope(Operator::Mul)),
                 "/"=>result.push(Token::Ope(Operator::Div)),
+                "("=>result.push(Token::Braket(Brackets::LeftRound)),
+                ")"=>result.push(Token::Braket(Brackets::RightRound)),
                 _=>{
                     eprintln!("Unknown Token: {}",run);
                     exit(5);

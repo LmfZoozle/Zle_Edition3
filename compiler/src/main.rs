@@ -16,7 +16,6 @@ fn main() {
         eprintln!("lack");
         exit(1);
     }
-    //println!("This is from zle compiler");
     let  name=&option[1];
     let code=if let Ok(a)=std::fs::read_to_string(name){
         a
@@ -27,11 +26,9 @@ fn main() {
     eprintln!("This is nightly build.");
     let token=lexer::read_into_token(code);
     eprintln!("トークナイズできた");
-    let a=parser::token_into_tree(&mut token.iter());
+    let a=parser::expr(&mut token.iter());
     eprintln!("パースできた");
 
     generator::gen_asm(a);
     eprintln!("コード生成したよ");
-
-
 }
