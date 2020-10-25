@@ -2,6 +2,7 @@
 .globl main
 main:
 push 0
+push 0
 push 1
   pop rdi
   pop rax
@@ -11,6 +12,10 @@ push 4
   pop rdi
   pop rax
   add rax, rdi
+push rax
+  pop rdi
+  pop rax
+  sub rax, rdi
 push rax
 push 2
   pop rdi
@@ -27,6 +32,11 @@ push rax
   pop rax
   cqo
   idiv rdi
+push rax
+push 10
+  pop rdi
+  pop rax
+  add rax, rdi
 push rax
   pop rax
   ret
