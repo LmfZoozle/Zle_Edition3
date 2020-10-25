@@ -1,85 +1,163 @@
 use super::*;
 
-#[derive(Clone,Copy,PartialEq)]
-pub enum Operators{
+#[derive(Clone, Copy, PartialEq)]
+pub enum Operators {
     Add,
     Sub,
     Mul,
     Div,
 }
 
-#[derive(Clone,Copy,PartialEq)]
-pub enum Brackets{
+#[derive(Clone, Copy, PartialEq)]
+pub enum Brackets {
     LeftRound,
     RightRound,
 }
 
-
-#[derive(Clone,Copy,PartialEq)]
-pub enum Token{
-    Ope(Operators),    
+#[derive(Clone, Copy, PartialEq)]
+pub enum Token {
+    Ope(Operators),
     Num(i32),
     Braket(Brackets),
 }
 
-pub fn as_long_as_num(input:&String)->Option<i32>{
+fn as_long_as_num(input: &String) -> Option<i32> {
     //let mut chars=input.chars().collect::<Vec<char>>();
     //流石にこのままの実装は手間かかりすぎダヨナー
-    let lim=input.len() as i32+1;
-    let mut c=0;
-    let mut temporal=0;
-    let mut done=false;
-    while c<lim{
-        let mut buff=String::new();
-        let mut inner=0;
-        for run in input.chars(){
+    let lim = input.len() as i32 + 1;
+    let mut c = 0;
+    let mut temporal = 0;
+    let mut done = false;
+    while c < lim {
+        let mut buff = String::new();
+        let mut inner = 0;
+        for run in input.chars() {
             buff.push(run);
-            inner+=1;
-            if inner==c{
+            inner += 1;
+            if inner == c {
                 break;
             }
         }
-        if let Ok(num) =buff.to_string().parse::<i32>(){
-            temporal=num;
-            done=true;
+        if let Ok(num) = buff.to_string().parse::<i32>() {
+            temporal = num;
+            done = true;
         }
-        c+=1;
+        c += 1;
     }
 
-    if done{
-        Some(temporal)        
-    }else{
+    if done {
+        Some(temporal)
+    } else {
         None
     }
 }
 
-pub fn Ex_read_into_token(input:String)->Vec<Token>{
-    let mut result=Vec::new();
-    
+pub fn Ex_read_into_token(input: String) -> Vec<Token> {
+    let mut result = Vec::new();
+    let aa: Vec<char> = input.chars().collect();
+    let mut iter = aa.iter();
+    let mut numerics = String::new();
+    let mut havenum = false;
+    loop {
+        if let Some(run) = iter.next() {
+            match run {
+                _ if run.is_numeric() => {
+                    eprintln!("すうじ！");
+                    numerics.push(*run);
+                    havenum = true;
+                }
+
+                '+' => {
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();
+                    }
+                    result.push(Token::Ope(Operators::Add));
+                }
+                '-' => {
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();
+                    }
+                    result.push(Token::Ope(Operators::Sub));
+                }
+                '*' => {
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();
+                    }
+                    result.push(Token::Ope(Operators::Mul));
+                }
+                '/' => {
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();
+                    }
+                    result.push(Token::Ope(Operators::Div));
+                }
+                '(' => {
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();
+                    } 
+                    result.push(Token::Braket(Brackets::LeftRound));
+                }
+                ')' => {
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();                   
+                    } 
+                        result.push(Token::Braket(Brackets::RightRound));                    
+                }
+                ' '=>{
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();                   
+                    } 
+                }
+                _ => {
+                    eprintln!("Unknown token found");
+                    exit(4);
+                }
+            }
+        } else {
+            if havenum{
+                result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+            }
+            break;
+        }
+    }
     result
 }
 
-pub fn read_into_token(input:String)->Vec<Token>{
-    let mut result=Vec::new();
-    for run in input.split_whitespace(){
-        if let Ok(n)=run.parse::<i32>(){
-            if IS_DEBUG{
-                eprintln!("Num: {}",n);
+pub fn read_into_token(input: String) -> Vec<Token> {
+    let mut result = Vec::new();
+    for run in input.split_whitespace() {
+        if let Ok(n) = run.parse::<i32>() {
+            if IS_DEBUG {
+                eprintln!("Num: {}", n);
             }
             result.push(Token::Num(n));
-        }else{
+        } else {
             match run {
-                "+"=>{
+                "+" => {
                     eprintln!("あど");
                     result.push(Token::Ope(Operators::Add))
                 }
-                "-"=>result.push(Token::Ope(Operators::Sub)),
-                "*"=>result.push(Token::Ope(Operators::Mul)),
-                "/"=>result.push(Token::Ope(Operators::Div)),
-                "("=>result.push(Token::Braket(Brackets::LeftRound)),
-                ")"=>result.push(Token::Braket(Brackets::RightRound)),
-                _=>{
-                    eprintln!("Unknown Token: {}",run);
+                "-" => result.push(Token::Ope(Operators::Sub)),
+                "*" => result.push(Token::Ope(Operators::Mul)),
+                "/" => result.push(Token::Ope(Operators::Div)),
+                "(" => result.push(Token::Braket(Brackets::LeftRound)),
+                ")" => result.push(Token::Braket(Brackets::RightRound)),
+                _ => {
+                    eprintln!("Unknown Token: {}", run);
                     exit(5);
                 }
             }

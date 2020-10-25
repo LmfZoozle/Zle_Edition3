@@ -24,18 +24,11 @@ fn main() {
         exit(2);
     };
     eprintln!("This is nightly build.");
-//    let token=lexer::read_into_token(code);
+    let token=lexer::Ex_read_into_token(code);
     eprintln!("トークナイズできた");
-//    let a=parser::expr(&mut token.iter());
+    let a=parser::expr(&mut token.iter());
     eprintln!("パースできた");
 
-//    generator::gen_asm(a);
+    generator::gen_asm(a);
     eprintln!("コード生成したよ");
-    let a=String::from("543210ああ");
-    assert_eq!(543210,lexer::as_long_as_num(&a).unwrap());
-    let b=String::from("あｓだ");
-    assert_eq!(None,lexer::as_long_as_num(&b));
-    let c=String::from("1あいうえあｄ");
-    assert_eq!(Some(1),lexer::as_long_as_num(&c));
-    assert_eq!(Some(1234),lexer::as_long_as_num(&"1234".to_string()));
 }
