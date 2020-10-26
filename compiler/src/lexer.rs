@@ -1,4 +1,5 @@
 use super::*;
+mod lex_err;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum Operators {
@@ -58,6 +59,7 @@ pub fn read_into_token(input: String) -> Vec<Token> {
     let mut iter = aa.iter();
     let mut numerics = String::new();
     let mut havenum = false;
+    let mut tokencount=0;
     loop {
         if let Some(run) = iter.next() {
             match run {
@@ -72,59 +74,78 @@ pub fn read_into_token(input: String) -> Vec<Token> {
                         havenum = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();
+                        tokencount+=1;
                     }
                     result.push(Token::Ope(Operators::Add));
+                    tokencount+=1;
                 }
                 '-' => {
                     if havenum {
                         havenum = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();
+                        tokencount+=1;
                     }
                     result.push(Token::Ope(Operators::Sub));
+                        tokencount+=1;
                 }
                 '*' => {
                     if havenum {
                         havenum = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();
+                        tokencount+=1;
                     }
                     result.push(Token::Ope(Operators::Mul));
+                        tokencount+=1;
                 }
                 '/' => {
                     if havenum {
                         havenum = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();
+                        tokencount+=1;
                     }
                     result.push(Token::Ope(Operators::Div));
+                        tokencount+=1;
                 }
                 '(' => {
                     if havenum {
                         havenum = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();
+                        tokencount+=1;
                     } 
                     result.push(Token::Braket(Brackets::LeftRound));
+                        tokencount+=1;
                 }
                 ')' => {
                     if havenum {
                         havenum = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();                   
+                        tokencount+=1;
                     } 
                         result.push(Token::Braket(Brackets::RightRound));                    
+                        tokencount+=1;
                 }
                 ' '=>{
                     if havenum {
                         havenum = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();                   
-                    } 
+                        tokencount+=1;
+                    }
                 }
                 _ => {
-                    eprintln!("Unknown token found");
-                    exit(4);
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
+                        numerics.clear();                   
+                        tokencount+=1;
+                    } 
+                    tokencount+=1;
+                    lex_err::unknown_token(tokencount, *run);                    
                 }
             }
         } else {
@@ -133,6 +154,7 @@ pub fn read_into_token(input: String) -> Vec<Token> {
             }
             break;
         }
+
     }
     result
 }
