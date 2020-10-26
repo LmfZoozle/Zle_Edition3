@@ -1,13 +1,13 @@
 mod lexer;
 mod parser;
 mod generator;
+mod error;
 
 //use std::env::args;
 use std::process::exit;
 //use std::fs;
 
 //const PATH: &str = "~/Code/Zle/Edition3/test";
-const IS_DEBUG:bool=true;
 
 fn main() {
     eprintln!("zle compiler activated.");
@@ -28,7 +28,10 @@ fn main() {
     eprintln!("トークナイズできた");
     let a=parser::expr(&mut token.iter());
     eprintln!("パースできた");
+    if error::analysis_result(){
+        generator::gen_asm(a);
+        eprintln!("コード生成したよ");
+        eprint!("結果: ")
+    }
 
-    generator::gen_asm(a);
-    eprintln!("コード生成したよ");
 }

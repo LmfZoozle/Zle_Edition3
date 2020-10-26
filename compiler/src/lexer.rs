@@ -1,5 +1,5 @@
 use super::*;
-mod lex_err;
+//mod lex_err;
 
 #[derive(Clone, Copy, PartialEq)]
 pub enum Operators {
@@ -145,7 +145,7 @@ pub fn read_into_token(input: String) -> Vec<Token> {
                         tokencount+=1;
                     } 
                     tokencount+=1;
-                    lex_err::unknown_token(tokencount, *run);                    
+                    error::from_lex::err_unknown_token(tokencount, *run);                    
                 }
             }
         } else {
