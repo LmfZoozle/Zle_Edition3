@@ -27,6 +27,7 @@ pub enum Relation{
     SmallOrEq,
 }
 
+
 #[derive(Clone, Copy, PartialEq)]
 pub enum Token {
     Ope(Operators),
@@ -34,6 +35,8 @@ pub enum Token {
     Braket(Brackets),
     Ident(char),
     Relate(Relation),
+    Return,
+    WhiteSpace,
 }
 
 //軽量化した
@@ -53,14 +56,28 @@ fn as_long_as_num(input: &String) -> Option<i32> {
     }
 }
 
+/*fn check_relate(itr:&mut std::slice::Iter<char>)->Option<Relation>{
+    let mut clo=itr.clone();
 
+}*/
+
+fn solve_num_stack(flag:&mut bool,numerics:&mut String,cunter:&mut i32,vctr:&mut Vec<Token>,what:Token){
+    if *flag{
+        *flag=false;
+        vctr.push(Token::Num(numerics.parse::<i32>().unwrap()));
+        numerics.clear();
+        *cunter+=1;
+    }
+    vctr.push(what);
+    *cunter+=1;
+}
 
 pub fn read_into_token(input: String) -> Vec<Token> {
     let mut result = Vec::new();
     let aa: Vec<char> = input.chars().collect();
     let mut iter = aa.iter();
     let mut numerics = String::new();
-    let mut havenum = false;
+    let mut numflag = false;
     let mut tokencount=0;
     loop {
         if let Some(run) = iter.next() {
@@ -68,92 +85,63 @@ pub fn read_into_token(input: String) -> Vec<Token> {
                 _ if run.is_numeric() => {
                     eprintln!("すうじ！");
                     numerics.push(*run);
-                    havenum = true;
+                    numflag= true;
                 }
 
                 _ if 'a'<=*run&&*run<='z'=>{
                     eprintln!("いちもじ！");
-                    if havenum {
-                        havenum = false;
-                        result.push(Token::Ident(*run));
-                        numerics.clear();
-                        tokencount+=1;
-                    }
-                    result.push(Token::Ident(*run));
-                    tokencount+=1;
+                    solve_num_stack(&mut numflag, &mut numerics,
+                         &mut tokencount, &mut result, Token::Ident(*run));
                 }
 
-                '+' => {
-                    if havenum {
-                        havenum = false;
-                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
-                        numerics.clear();
-                        tokencount+=1;
-                    }
-                    result.push(Token::Ope(Operators::Add));
-                    tokencount+=1;
+                '<'=>{
+
+                }
+
+                '='=>{
+
+                }
+
+                '>'=>{
+
+                }
+
+
+                '+' => {        
+                    solve_num_stack(&mut numflag, &mut numerics,
+                         &mut tokencount, &mut result, Token::Ope(Operators::Add));
                 }
                 '-' => {
-                    if havenum {
-                        havenum = false;
-                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
-                        numerics.clear();
-                        tokencount+=1;
-                    }
-                    result.push(Token::Ope(Operators::Sub));
-                        tokencount+=1;
+                    solve_num_stack(&mut numflag, &mut numerics,
+                         &mut tokencount, &mut result, Token::Ope(Operators::Sub));
                 }
                 '*' => {
-                    if havenum {
-                        havenum = false;
-                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
-                        numerics.clear();
-                        tokencount+=1;
-                    }
-                    result.push(Token::Ope(Operators::Mul));
-                        tokencount+=1;
+                    solve_num_stack(&mut numflag, &mut numerics,
+                         &mut tokencount, &mut result,Token::Ope(Operators::Mul));
                 }
                 '/' => {
-                    if havenum {
-                        havenum = false;
-                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
-                        numerics.clear();
-                        tokencount+=1;
-                    }
-                    result.push(Token::Ope(Operators::Div));
-                        tokencount+=1;
+                    solve_num_stack(&mut numflag, &mut numerics,
+                         &mut tokencount, &mut result,Token::Ope(Operators::Div));
                 }
                 '(' => {
-                    if havenum {
-                        havenum = false;
-                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
-                        numerics.clear();
-                        tokencount+=1;
-                    } 
-                    result.push(Token::Braket(Brackets::LeftRound));
-                        tokencount+=1;
+                    solve_num_stack(&mut numflag, &mut numerics,
+                         &mut tokencount, &mut result,Token::Braket(Brackets::LeftRound));
                 }
                 ')' => {
-                    if havenum {
-                        havenum = false;
-                        result.push(Token::Num(numerics.parse::<i32>().unwrap()));
-                        numerics.clear();                   
-                        tokencount+=1;
-                    } 
-                        result.push(Token::Braket(Brackets::RightRound));                    
-                        tokencount+=1;
+                solve_num_stack(&mut numflag, &mut numerics,
+                         &mut tokencount, &mut result,Token::Braket(Brackets::RightRound));
                 }
                 ' '=>{
-                    if havenum {
-                        havenum = false;
+                    if numflag {
+                        numflag = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();                   
                         tokencount+=1;
                     }
                 }
                 _ => {
-                    if havenum {
-                        havenum = false;
+                    if numflag {
+                        numflag = false;
                         result.push(Token::Num(numerics.parse::<i32>().unwrap()));
                         numerics.clear();                   
                         tokencount+=1;
@@ -163,7 +151,7 @@ pub fn read_into_token(input: String) -> Vec<Token> {
                 }
             }
         } else {
-            if havenum{
+            if numflag{
                 result.push(Token::Num(numerics.parse::<i32>().unwrap()));
             }
             break;
