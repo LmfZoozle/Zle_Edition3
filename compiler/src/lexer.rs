@@ -36,6 +36,7 @@ pub enum Token {
     Relate(Relation),
 }
 
+//軽量化した
 fn as_long_as_num(input: &String) -> Option<i32> {
     let mut numerics=String::new();
     for run in input.chars(){
