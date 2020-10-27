@@ -15,43 +15,44 @@ pub enum Brackets {
     RightRound,
 }
 
+#[derive(Clone,Copy,PartialEq)]
+pub enum Relation{
+    Equal,
+    Not,
+    NotEq,
+    Assign,
+    Bigger,
+    BigOrEq,
+    Smaller,
+    SmallOrEq,
+}
+
 #[derive(Clone, Copy, PartialEq)]
 pub enum Token {
     Ope(Operators),
     Num(i32),
     Braket(Brackets),
+    Ident(char),
+    Relate(Relation),
 }
 
 fn as_long_as_num(input: &String) -> Option<i32> {
-    //let mut chars=input.chars().collect::<Vec<char>>();
-    //流石にこのままの実装は手間かかりすぎダヨナー
-    let lim = input.len() as i32 + 1;
-    let mut c = 0;
-    let mut temporal = 0;
-    let mut done = false;
-    while c < lim {
-        let mut buff = String::new();
-        let mut inner = 0;
-        for run in input.chars() {
-            buff.push(run);
-            inner += 1;
-            if inner == c {
-                break;
-            }
+    let mut numerics=String::new();
+    for run in input.chars(){
+        if run.is_digit(10){
+            numerics.push(run);
+        }else{
+            break;
         }
-        if let Ok(num) = buff.to_string().parse::<i32>() {
-            temporal = num;
-            done = true;
-        }
-        c += 1;
     }
-
-    if done {
-        Some(temporal)
-    } else {
+    if let Ok(num)=numerics.parse::<i32>(){
+        Some(num)
+    }else{
         None
     }
 }
+
+
 
 pub fn read_into_token(input: String) -> Vec<Token> {
     let mut result = Vec::new();
@@ -67,6 +68,18 @@ pub fn read_into_token(input: String) -> Vec<Token> {
                     eprintln!("すうじ！");
                     numerics.push(*run);
                     havenum = true;
+                }
+
+                _ if 'a'<=*run&&*run<='z'=>{
+                    eprintln!("いちもじ！");
+                    if havenum {
+                        havenum = false;
+                        result.push(Token::Ident(*run));
+                        numerics.clear();
+                        tokencount+=1;
+                    }
+                    result.push(Token::Ident(*run));
+                    tokencount+=1;
                 }
 
                 '+' => {

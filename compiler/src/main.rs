@@ -33,5 +33,4 @@ fn main() {
         eprintln!("コード生成したよ");
         eprint!("結果: ")
     }
-
 }
