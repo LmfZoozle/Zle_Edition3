@@ -1,4 +1,4 @@
-pub fn err_unknown_token(line:i32,what:char){
+pub fn err_unknown_token(line:i32,what:&str){
     unsafe {
         super::increment_errors();
     }
