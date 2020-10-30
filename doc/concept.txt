@@ -27,3 +27,10 @@ primary     =   num | ident | "(" expr ")"
 ＃とりあえず
 バイトコードは置いといて、ひとまずアセンブリを吐く
 間違った文に対してはpanic!()を呼んで構わない
+:panic!()やexit()の終了コードについて
+error.rsからは  「0」
+from_lex.rsは   「1」
+from_parse.rsは 「2」
+from_gen.rsは   「3」
+とする。
+現在はそれぞれのプロセスから直にexit()を呼んでいるけど、いずれerror系統にまとめる

@@ -23,6 +23,7 @@ fn prologue() {
     return ();
 }
 fn _what_gen_asm(token:Box<Node>) {
+    use lexer::Token::*;
     match  *token.clone(){
         Node::Num(a)=>{
             println!("push {}",a);
@@ -36,22 +37,44 @@ fn _what_gen_asm(token:Box<Node>) {
     println!("  pop rdi");
     println!("  pop rax");
     if let Node::Ope(a)=*token{
-        if let lexer::Token::Ope(op)= a.what{
-            match op{
-                Operators::Add=>{
-                    println!("  add rax, rdi");
-                }
-                Operators::Sub=>{
-                    println!("  sub rax, rdi");
-                }
-                Operators::Mul=>{
-                    println!("  imul rax, rdi");
-                }
-                Operators::Div=>{
-                    println!("  cqo");
-                    println!("  idiv rdi");
-                }
+        match a.what{
+            Add=>{
+                println!("  add rax, rdi");
             }
+            Sub=>{
+                println!("  sub rax, rdi");
+            }
+            Mul=>{
+                println!("  imul rax, rdi");
+            }
+            Div=>{
+                println!("  cqo");
+                println!("  imul rax, rdi");
+            }
+            Equal=>{
+                println!("  cmp rax, rdi");
+                println!("  sete al");
+                println!("  movzb rax, al");
+            }
+            NotEq=>{
+                println!("  cmp rax, rdi");
+                println!("  setne al");
+                println!("  movzb rax, al");
+            }
+            Smaller=>{
+                println!("  cmp rax, rdi");
+                println!("  setl al");
+                println!("  movzb rax, al");
+            }
+            SmallOrEq=>{
+                println!("  cmp rax, rdi");
+                println!("  setle al");
+                println!("  movzb rax, al");
+            }
+            _=>{
+                eprintln!("Something went wrong");
+                std::process::exit(4);
+            }            
         }
     }
     println!("push rax");

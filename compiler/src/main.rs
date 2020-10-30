@@ -1,10 +1,10 @@
 mod lexer;
 mod parser;
-//mod generator;
+mod generator;
 mod error;
 
 
-const PATH: &str = "~/Code/Zle/Edition3/test";
+//const PATH: &str = "~/Code/Zle/Edition3/test";
 
 fn main() {
     eprintln!("zle compiler activated.");
@@ -30,7 +30,7 @@ fn main() {
     let a=parser::expr(&mut token.iter());
     eprintln!("パースできた");
     if error::analysis_result(){
-    //    generator::gen_asm(a);
+        generator::gen_asm(a);
         eprintln!("コード生成したよ");
         eprint!("結果: ")
     }
