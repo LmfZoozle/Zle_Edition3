@@ -1,173 +1,184 @@
+use super::lexer::Token::*;
 use super::lexer::*;
 use super::*;
-//mod parse_err;
 
-fn unary(token: &mut std::slice::Iter<Token>)->Box<Node>{
-    if expect_ope_next(token,lexer::Operators::Add){
-        return unary(token);
+fn consume_number(itr: &mut std::slice::Iter<Token>) -> Option<i32> {
+    let mut clo = itr.clone();
+    if let Some(actual) = clo.next() {
+        if let Token::Number(num) = *actual {
+            itr.next();
+            Some(num)
+        } else {
+            None
+        }
+    } else {
+        None
     }
-    if expect_ope_next(token,lexer::Operators::Sub){
-        return new_node_ope(Token::Ope(Operators::Sub), new_node_num(0), unary(token));
-    }
-    return prim(token);
 }
 
-fn expect_bracket(itr:&mut std::slice::Iter<Token>,brack:Brackets)->bool{
+fn consume_ident(itr: &mut std::slice::Iter<Token>) -> Option<String> {
     let mut clo = itr.clone();
-    if let Some(bb) = clo.next() {
-        if let Token::Braket(brk)=bb{
-            if *brk==brack{
-                itr.next();
-                true
-            }else{
-                false
-            }
-        }else{
+    if let Some(actual) = clo.next() {
+        if let Token::Ident(name) = actual {
+            itr.next();
+            Some(name.clone())
+        } else {
+            None
+        }
+    } else {
+        None
+    }
+}
+
+fn consume(itr: &mut std::slice::Iter<Token>, expect: Token) -> bool {
+    let mut clo = itr.clone();
+    if let Some(actual) = clo.next() {
+        if *actual == expect {
+            itr.next();
+            true
+        } else {
             false
         }
-    }else{
+    } else {
         false
     }
 }
 
-fn prim(token: &mut std::slice::Iter<Token>) -> Box<Node> {
-    if expect_bracket(token,Brackets::LeftRound){
-        let result=expr(token);
-        if expect_bracket(token,Brackets::RightRound){
-            eprintln!("そう！！！");
-            return result;
-        }else{
-            panic!("ん？");
+pub fn expr(token: &mut std::slice::Iter<Token>) -> Box<Node> {
+    assign(token)
+}
+
+fn assign(token: &mut std::slice::Iter<Token>) -> Box<Node> {
+    let mut result = equality(token);
+    if consume(token, Assign) {
+        result = assign(token);
+    }
+    result
+}
+
+fn equality(token: &mut std::slice::Iter<Token>) -> Box<Node> {
+    let mut result = relation(token);
+    loop {
+        if consume(token, Equal) {
+            result = relation(token);
+        } else if consume(token, NotEq) {
+            result = relation(token);
+        } else {
+            break;
         }
     }
-    
-    if let NoOrNum::Yes(nu) = expect_num_next(token) {
-        eprintln!("prim　から　num");
-        new_node_num(nu)
-    } else {
-        panic!("なにかおかしい");
+    result
+}
+
+fn relation(token: &mut std::slice::Iter<Token>) -> Box<Node> {
+    let mut result = add(token);
+    loop {
+        if consume(token, Smaller) {
+            result=new_binary(Token::Smaller,result,add(token));
+        } else if consume(token, SmallOrEq) {
+            result=new_binary(Token::SmallOrEq, result, add(token));
+        //今は左辺右辺入れ替えるけど、参照を実装するならこれは出来ない
+        } else if consume(token, Bigger) {
+            result=new_binary(Token::Smaller,add(token) , result);
+        } else if consume(token, BigOrEq) {
+            result=new_binary(Token::SmallOrEq,add(token), result);
+        } else {
+            break;
+        }
     }
+    result
+}
+
+fn add(token: &mut std::slice::Iter<Token>)->Box<Node>{
+    let mut result=mul(token);
+    loop {
+        if consume(token,Add){
+            result=new_binary(Add, result, unary(token));
+        }else if consume(token,Sub){
+            result=new_binary(Sub, result, unary(token));
+        }else{
+            break;
+        }
+    }
+    result
 }
 
 fn mul(token: &mut std::slice::Iter<Token>) -> Box<Node> {
     let mut result = unary(token);
     loop {
-        if expect_ope_next(token,Operators::Mul) {
-            eprintln!("mul　から　MUL");
-            result = new_node_ope(Token::Ope(Operators::Mul), result, unary(token))
-        } else if expect_ope_next(token,Operators::Div) {
-            eprintln!("mul　から　DIV");
-            result = new_node_ope(Token::Ope(Operators::Div), result, unary(token));
+        if consume(token, Mul) {
+            ////eprintln!("mul　から　MUL");
+            result = new_binary(Token::Mul, result, unary(token))
+        } else if consume(token, Div) {
+            //eprintln!("mul　から　DIV");
+            result = new_binary(Token::Div, result, unary(token));
         } else {
-            eprintln!("mul　から　break");
+            //eprintln!("mul　から　break");
             return result;
         }
     }
 }
 
-pub fn expr(token: &mut std::slice::Iter<Token>) -> Box<Node> {
-    let mut result = mul(token);
-    loop {
-        if expect_ope_next(token,Operators::Add) {
-            eprintln!("token　から　ADD");
-            result = new_node_ope(Token::Ope(Operators::Add), result, mul(token))
-        } else if expect_ope_next(token,Operators::Sub) {
-            eprintln!("token　から　SUB");
-            result = new_node_ope(Token::Ope(Operators::Sub), result, mul(token));
-        } else {
-            eprintln!("token　から　return");
+fn unary(token: &mut std::slice::Iter<Token>) -> Box<Node> {
+    if consume(token, Add) {
+        return unary(token);
+    }
+    if consume(token, Sub) {
+        return new_binary(Sub, new_num(0), unary(token));
+    }
+    return prim(token);
+}
+
+fn prim(token: &mut std::slice::Iter<Token>) -> Box<Node> {
+    if consume(token, LeftRound) {
+        let result = expr(token);
+        if consume(token, RightRound) {
+            //eprintln!("そう！！！");
             return result;
-        }
-    }
-}
-
-fn expect_ope_next(itr: &mut std::slice::Iter<Token>,ope: lexer::Operators) -> bool {
-    let mut clo = itr.clone();
-    if let Some(bb) = clo.next() {
-        if let Token::Ope(a) = *bb {
-            if a == ope {
-                itr.next();
-                true
-            } else {
-                false
-            }
         } else {
-            false
+            panic!("ん？");
         }
-    }else{
-        false
     }
-}
 
-enum NoOrNum {
-    No,
-    Yes(i32),
-}
-
-fn expect_num_next(itr: &mut std::slice::Iter<Token>) -> NoOrNum {
-    let mut clo = itr.clone();
-    if let Token::Num(a) = clo.next().unwrap() {
-        itr.next();
-        NoOrNum::Yes(*a)
+    if let Some(nu) = consume_number(token) {
+        //eprintln!("prim　から　num");
+        new_num(nu)
     } else {
-        NoOrNum::No
+        panic!("なにかおかしい");
     }
 }
-
-/*fn should_expr(master:&mut Box<Node>, itr:&mut std::slice::Iter<Box<Node>>)->Box<Node>{
-    new_node_num(4);
-}
-
-//fn consume(itr:std::slice::Iter<Box<Node>>);
-fn should_number(master:&mut Box<Node>,itr:&mut std::slice::Iter<Box<Node>>)->Box<Node>{
-    if let Node::Num(n)=**itr.next().unwrap(){
-       let result=new_node_num(n);
-       result
-    }else{
-        panic!("should num");
-    }
-}*/
 
 #[derive(PartialEq, Clone)]
 pub enum Node {
     Num(i32),
-    Ope(OpeAndNode),
+    Ope(BinaryNode),
 }
 
-
-pub fn new_node_num(num: i32) -> Box<Node> {
+pub fn new_num(num: i32) -> Box<Node> {
     Box::new(Node::Num(num))
 }
 
-fn new_node_ope(wh: lexer::Token, lf: Box<Node>, rt: Box<Node>) -> Box<Node> {
+fn new_binary(wh: lexer::Token, lf: Box<Node>, rt: Box<Node>) -> Box<Node> {
     Box::new(Node::Ope(_new_op_an_no(wh, lf, rt)))
 }
 
 #[derive(PartialEq, Clone)]
-pub struct OpeAndNode {
+pub struct BinaryNode {
     pub what: lexer::Token,
     pub left: Box<Node>,
     pub right: Box<Node>,
 }
 
-fn _new_op_an_no(wh: lexer::Token, lf: Box<Node>, rt: Box<Node>) -> OpeAndNode {
-    OpeAndNode::_new(wh, lf, rt)
+fn _new_op_an_no(wh: lexer::Token, lf: Box<Node>, rt: Box<Node>) -> BinaryNode {
+    BinaryNode::_new(wh, lf, rt)
 }
 
-impl OpeAndNode {
+impl BinaryNode {
     fn _new(wh: lexer::Token, lf: Box<Node>, rt: Box<Node>) -> Self {
-        OpeAndNode {
+        BinaryNode {
             what: wh,
             left: lf,
             right: rt,
         }
     }
-}
-
-pub mod debug {
-    fn declare_debug(name: &str) {
-        eprintln!("This is Debug Fn !!");
-        eprintln!("From: {}", name);
-    }
-    use super::super::lexer;
 }

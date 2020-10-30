@@ -1,0 +1,3 @@
+#!/bin/sh
+cd ~/Code/Zle/Edition3/compiler
+cargo run>../test/test.s ../test/test.zle

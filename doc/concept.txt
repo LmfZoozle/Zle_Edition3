@@ -2,6 +2,17 @@
 ・VMとかバイトコードを作る
 ・ちょっと関数型チックにしたい
 
+＃文法
+program     =   expr *
+expr        =   assign
+assign      =   equality ("=" assign) ?
+equality    =   relational ("==" relational | "!=" relational ) *
+relational  =   add ("<" add | "<=" add | ">" add | ">=" add)*
+add         =   mul ("+" mul | "-" mul)*
+mul         =   unary ("*" unary | "/" unary)*
+unary       =   ("+" | "-")? primary
+primary     =   num | ident | "(" expr ")"
+
 ＃現在の目標
 変数を使えるようにする
 「return」キーワード
@@ -15,3 +26,4 @@
 
 ＃とりあえず
 バイトコードは置いといて、ひとまずアセンブリを吐く
+間違った文に対してはpanic!()を呼んで構わない
