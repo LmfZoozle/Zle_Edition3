@@ -1,13 +1,12 @@
 use super::*;
 
-
 #[derive(Clone, PartialEq)]
 pub enum Token {
     Add,
     Sub,
     Mul,
     Div,
-    LeftRound,    
+    LeftRound,
     RightRound,
     Number(i32),
     Ident(String),
@@ -20,7 +19,6 @@ pub enum Token {
     Bigger,
     BigOrEq,
 }
-
 
 fn consume_numeric(itr: &mut std::slice::Iter<char>) -> Option<i32> {
     let mut numerics = String::new();
@@ -59,6 +57,26 @@ fn consume_unknown(itr: &mut std::slice::Iter<char>) -> String {
     }
 }
 
+fn consume_strict(itr: &mut std::slice::Iter<char>, expect: &str) -> bool {
+    let mut current = String::new();
+    let mut clo = itr.clone();
+    let mut calltime = 0;
+    loop {
+        if let Some(what) = clo.next() {
+            current.push(*what);
+            calltime += 1;
+        } else {
+            return false;
+        }
+        if current == expect {
+            for _a in 0..calltime {
+                eprint!("{} ", itr.next().unwrap());
+            }
+            return true;
+        }
+    }
+}
+
 fn consume(itr: &mut std::slice::Iter<char>, expect: &str) -> bool {
     let mut current = String::new();
     let mut clo = itr.clone();
@@ -81,26 +99,25 @@ fn consume(itr: &mut std::slice::Iter<char>, expect: &str) -> bool {
     }
 }
 
-fn consume_ident(itr: &mut std::slice::Iter<char>)->Option<String>{
-    let mut current=String::new();
-    let clo=itr.clone();    
-    for r in clo{
-        if r.is_alphanumeric()&&!r.is_whitespace(){
+fn consume_ident(itr: &mut std::slice::Iter<char>) -> Option<String> {
+    let mut current = String::new();
+    let clo = itr.clone();
+    for r in clo {
+        if r.is_alphanumeric() && !r.is_whitespace() {
             current.push(*r);
             itr.next();
-        }else{
+        } else {
             break;
         }
     }
-    if current.is_empty(){
+    if current.is_empty() {
         None
-    }else{
+    } else {
         Some(current)
     }
 }
 
 pub fn read_into_token(input: String) -> Vec<Token> {
-
     let mut result = Vec::new();
     let aa: Vec<char> = input.chars().collect();
     let mut iter = &mut aa.iter();
@@ -111,7 +128,11 @@ pub fn read_into_token(input: String) -> Vec<Token> {
     loop {
         blankflag = false;
         //数字を処理
-        if let Some(num) = consume_numeric(&mut iter) {
+        //空白を処理 トークンに数えない
+        if consume_strict(iter, " ") {
+          //  eprintln!("空白を削除！");
+            blankflag = true;
+        } else if let Some(num) = consume_numeric(&mut iter) {
             result.push(Token::Number(num));
         }
         //四則演算を処理
@@ -125,40 +146,36 @@ pub fn read_into_token(input: String) -> Vec<Token> {
             result.push(Token::Div)
         }
         //カッコの類を処理
-        else if consume( iter, "(") {
+        else if consume(iter, "(") {
             result.push(Token::LeftRound);
-        } else if consume( iter, ")") {
+        } else if consume(iter, ")") {
             result.push(Token::RightRound);
         }
         //条件式の類を処理
-        else if consume( iter, "<=") {
+        else if consume(iter, "<=") {
             result.push(Token::SmallOrEq);
-        } else if consume( iter, ">=") {
+        } else if consume(iter, ">=") {
             result.push(Token::BigOrEq);
-        } else if consume( iter, "!=") {
+        } else if consume(iter, "!=") {
             result.push(Token::NotEq);
-        } else if consume( iter, "==") {
+        } else if consume(iter, "==") {
             result.push(Token::Equal);
-        } else if consume( iter, ">") {
+        } else if consume(iter, ">") {
             result.push(Token::Bigger);
-        } else if consume( iter, "<") {
+        } else if consume(iter, "<") {
             result.push(Token::Smaller);
-        } else if consume( iter, "!") {
+        } else if consume(iter, "!") {
             result.push(Token::Not);
-        } else if consume( iter, "=") {
+        } else if consume(iter, "=") {
             result.push(Token::Assign);
         }
         //識別子を処理
-        else if let Some(name)=consume_ident(iter){
+        else if let Some(name) = consume_ident(iter) {
             result.push(Token::Ident(name));
-        }
-        //空白を処理 トークンに数えない
-        else if consume( iter, " ") {
-            blankflag = true;
         }
         //未知のトークン
         else {
-            error::from_lex::err_unknown_token(tokencount, &consume_unknown( iter));
+            error::from_lex::err_unknown_token(tokencount, &consume_unknown(iter));
         }
         if let None = iter.clone().next() {
             break;
